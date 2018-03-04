@@ -1,0 +1,7 @@
+*.DS_Store
+*.codekit
+*.mo
+*.pyc
+*.sass-cache
+*.volt.php
+/.idea/

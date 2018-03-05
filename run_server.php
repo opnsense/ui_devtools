@@ -63,7 +63,12 @@ $run_command[] = "-S localhost:8000";
 $run_command[] = str_replace('//', '/', "-t {$config->environment->coreDir}/src/opnsense/www");
 
 // .htaccess alternative routing
-$run_command[] = ".htrouter.php";
+if (PHP_OS == 'WINNT') {
+    // for some reason, the windows version of the php local webserver expects the file location in it's current path
+    $run_command[] = "public\\.htrouter.php";
+} else {
+    $run_command[] = ".htrouter.php";
+}
 
 // set our working directory in the php environment in which the server runs
 putenv("DEV_WORKDIR=".__DIR__);

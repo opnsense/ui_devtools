@@ -39,7 +39,7 @@ $hosted_local_patterns[] = '/^\favicon.*/';
 foreach ($hosted_local_patterns as $pattern) {
     if (preg_match($pattern, $uri)) {
         if (strpos($uri, '/ui/') === 0) {
-            $path = __DIR__ . substr($uri, 3);
+            $path =  $_SERVER['DOCUMENT_ROOT'] . substr($uri, 3);
             if (is_file($path)) {
                 $tmp_ext = explode('.', strtolower($path));
                 $mimeTypes = [
@@ -69,6 +69,11 @@ $DEV_WORKDIR = getenv("DEV_WORKDIR"); // passed through from run_server
 session_start();
 $_SESSION["Username"]="root";
 session_write_close();
+
+if (PHP_OS == 'WINNT') {
+    // Windows doesn't know syslog facility LOCAL4
+    define("LOG_LOCAL4", LOG_USER);
+}
 
 if (preg_match("/^\/ui\/.*/", $uri)) {
     $_GET['_url'] = substr($_SERVER['REQUEST_URI'], 3);

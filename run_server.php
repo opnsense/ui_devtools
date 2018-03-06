@@ -56,7 +56,12 @@ foreach ($conf->application->contrib as $include) {
         $include_paths[] = trim($include);
     }
 }
-$run_command[] = '-d include_path=".:'.implode(':', $include_paths).'"';
+if (PHP_OS == 'WINNT') {
+    // include paths on windows differ
+    $run_command[] = '-d include_path=".;' . implode(';', $include_paths) . '"';
+} else {
+    $run_command[] = '-d include_path=".:' . implode(':', $include_paths) . '"';
+}
 
 // listen to localhost
 $run_command[] = "-S localhost:8000";

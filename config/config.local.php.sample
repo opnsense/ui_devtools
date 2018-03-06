@@ -27,36 +27,25 @@
  *
  */
 
-$conf = new \Phalcon\Config(array(
+// copy this template to config.local.php and adjust settings
+return new \Phalcon\Config(array(
     'application' => array(
-        'controllersDir' => '{plugin_directory}/src/opnsense/mvc/app/controllers/',
-        'modelsDir'      => '{plugin_directory}/src/opnsense/mvc/app/models/',
-        'viewsDir'       => '{plugin_directory}/src/opnsense/mvc/app/views/',
-        'libraryDir'     => '.',
-        'cacheDir'       => '{temp_directory}/cache',
-        'baseUri'        => '/opnsense_gui/',
+            /* Usually keep defaults as is */
+            'cacheDir'       => __DIR__ . '/../cache/',
+            'baseUri'        => '/opnsense_gui/',
     ),
     'globals' => array(
+        /* Usually keep defaults as is */
         'config_path'    => __DIR__ . '/../conf/',
-        'temp_path'      => '/tmp/',
+        'temp_path'      => __DIR__ . '/../temp/',
         'debug'          => false,
         'simulate_mode'  => true
     ),
     'environment' => array(
-        /* php includes to add */
-        'includes'      => array(
-            '.'
+        /* packages to include in setup */
+        'packages'      => array(
         ),
         /* location of OPNsense core package */
         'coreDir'        => '{root_of_OPNsense_core_repo}',
     )
 ));
-
-// Add core views
-if (strpos($conf->application->viewsDir, $conf->environment->coreDir) === false) {
-    $conf->application->viewsDir = array($conf->application->viewsDir,
-        "{$conf->environment->coreDir}/src/opnsense/mvc/app/views/"
-    );
-}
-
-return $conf;

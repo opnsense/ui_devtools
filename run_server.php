@@ -51,10 +51,12 @@ if (!is_file("{$config->globals->config_path}/config.xml")) {
 
 // gather php include paths and add to run command
 $include_paths = array();
-foreach ($config->environment->includes as $include) {
-    $include_paths[] = trim($include);
+foreach ($conf->application->contrib as $include) {
+    if (is_dir($include)) {
+        $include_paths[] = trim($include);
+    }
 }
-$run_command[] = '-d include_path="'.implode(':', $include_paths).'"';
+$run_command[] = '-d include_path=".:'.implode(':', $include_paths).'"';
 
 // listen to localhost
 $run_command[] = "-S localhost:8000";

@@ -26,7 +26,15 @@
  *    POSSIBILITY OF SUCH DAMAGE.
  *
  */
+
+// setup environment
+global $DEV_WORKDIR;
+$DEV_WORKDIR = getenv("DEV_WORKDIR"); // passed through from run_server
+
 $uri = urldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+
+// load our configuration, needed to support multiple document root directories
+$config = include "{$DEV_WORKDIR}/config/config.php";
 
 // handle local hosted files (js, css, etc)
 $hosted_local_patterns = array();
@@ -39,31 +47,28 @@ $hosted_local_patterns[] = '/^\favicon.*/';
 foreach ($hosted_local_patterns as $pattern) {
     if (preg_match($pattern, $uri)) {
         if (strpos($uri, '/ui/') === 0) {
-            $path =  $_SERVER['DOCUMENT_ROOT'] . substr($uri, 3);
-            if (is_file($path)) {
-                $tmp_ext = explode('.', strtolower($path));
-                $mimeTypes = [
-                    'css' => 'text/css',
-                    'js'  => 'application/javascript',
-                    'jpg' => 'image/jpg',
-                    'png' => 'image/png',
-                    'map' => 'application/json'
-                ];
-                if (isset($mimeTypes[$tmp_ext[count($tmp_ext)-1]])) {
-                    header("Content-Type: {$mimeTypes[$tmp_ext[count($tmp_ext)-1]]}");
+            foreach ($config->application->docroot as $docroot) {
+                $path =  $docroot . substr($uri, 3);
+                if (is_file($path)) {
+                    $tmp_ext = explode('.', strtolower($path));
+                    $mimeTypes = [
+                        'css' => 'text/css',
+                        'js'  => 'application/javascript',
+                        'jpg' => 'image/jpg',
+                        'png' => 'image/png',
+                        'map' => 'application/json'
+                    ];
+                    if (isset($mimeTypes[$tmp_ext[count($tmp_ext)-1]])) {
+                        header("Content-Type: {$mimeTypes[$tmp_ext[count($tmp_ext)-1]]}");
+                    }
+                    readfile($path);
+                    return true;
                 }
-                readfile($path);
-                return true;
             }
-            return false;
         }
         return false;
     }
 }
-
-// setup environment
-global $DEV_WORKDIR;
-$DEV_WORKDIR = getenv("DEV_WORKDIR"); // passed through from run_server
 
 // set user to root for local testing
 session_start();
@@ -82,5 +87,6 @@ if (preg_match("/^\/ui\/.*/", $uri)) {
     $_GET['_url'] = substr($_SERVER['REQUEST_URI'], 4);
     require_once "{$DEV_WORKDIR}/stubs/api.php";
 } else {
-    return false;
+    header('Location: /ui/');
+    return true;
 }

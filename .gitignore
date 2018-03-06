@@ -5,5 +5,10 @@
 *.sass-cache
 *.volt.php
 /.idea/
-/config/config.php
-/conf/config.xml
+/config/config.local.php
+/conf/*
+!/conf/.placeholder
+/cache/*
+!/cache/.placeholder
+/temp/*
+!/temp/.placeholder

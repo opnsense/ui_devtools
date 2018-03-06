@@ -28,16 +28,14 @@
  */
 $loader = new \Phalcon\Loader();
 
+$loaderDirs = array();
+foreach (array("controllersDir", "modelsDir", "libraryDir") as $topic) {
+    foreach ($config->application->$topic as $path) {
+        $loaderDirs[] = $path;
+    }
+}
+
 /**
  * We're a registering a set of directories taken from the configuration file
  */
-$loader->registerDirs(
-    array(
-        $config->application->controllersDir,
-        $config->application->modelsDir,
-        $config->application->libraryDir,
-        "{$config->environment->coreDir}/src/opnsense/mvc/app/controllers",
-        "{$config->environment->coreDir}/src/opnsense/mvc/app/models",
-        "{$config->environment->coreDir}/src/opnsense/mvc/app/library",
-    )
-)->register();
+$loader->registerDirs($loaderDirs)->register();

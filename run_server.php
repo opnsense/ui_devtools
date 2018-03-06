@@ -41,8 +41,6 @@ if (in_array('-d', $argv)) {
 
 $config = include __DIR__ . "/config/config.php";
 
-// copy our ht access router to the core www directory
-copy(__DIR__ . '/public/.htrouter.php', "{$config->environment->coreDir}/src/opnsense/www/.htrouter.php");
 
 // copy default config when there is no config found
 if (!is_file("{$config->globals->config_path}/config.xml")) {
@@ -74,6 +72,8 @@ if (PHP_OS == 'WINNT') {
     // for some reason, the windows version of the php local webserver expects the file location in it's current path
     $run_command[] = "public\\.htrouter.php";
 } else {
+    // copy our ht access router to the core www directory
+    copy(__DIR__ . '/public/.htrouter.php', "{$config->environment->coreDir}/src/opnsense/www/.htrouter.php");
     $run_command[] = ".htrouter.php";
 }
 

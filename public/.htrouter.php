@@ -80,11 +80,15 @@ if (PHP_OS == 'WINNT') {
     define("LOG_LOCAL4", LOG_USER);
 }
 
+// parse request query parameters
+$_GET = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
+parse_str($_GET, $_GET);
+// handle requests
 if (preg_match("/^\/ui\/.*/", $uri)) {
-    $_GET['_url'] = substr($_SERVER['REQUEST_URI'], 3);
+    $_GET['_url'] = substr(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), 3);
     require_once "{$DEV_WORKDIR}/stubs/index.php";
 } elseif (preg_match("/^\/api\/.*/", $uri)) {
-    $_GET['_url'] = substr($_SERVER['REQUEST_URI'], 4);
+    $_GET['_url'] = substr(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), 4);
     require_once "{$DEV_WORKDIR}/stubs/api.php";
 } else {
     header('Location: /ui/');

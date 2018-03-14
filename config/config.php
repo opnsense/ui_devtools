@@ -50,15 +50,21 @@ foreach ($conf->environment->packages as $package) {
         "viewsDir" => preg_replace('#/+#','/',"{$package}/src/opnsense/mvc/app/views/"),
         "libraryDir" => preg_replace('#/+#','/',"{$package}/src/opnsense/mvc/app/library/"),
         "docroot" => preg_replace('#/+#','/',"{$package}/src/opnsense/www/"),
-        "contrib" => preg_replace('#/+#','/',"{$package}/src/opnsense/contrib/")
+        "contrib" => array(
+            preg_replace('#/+#','/',"{$package}/src/opnsense/contrib/"),
+            preg_replace('#/+#','/',"{$package}/contrib/")
+        )
     );
 
-    foreach ($packageDirs as $packageDir => $location) {
-        if (is_dir($location)) {
-            if (!isset($conf->application->$packageDir) || !in_array($location,
-                    $conf->application->$packageDir->toArray())) {
-                // merge configuration
-                $conf->merge(new \Phalcon\Config(["application" => [$packageDir => array($location),],]));
+    foreach ($packageDirs as $packageDir => $loc) {
+        $locations = is_array($loc) ? $loc : array($loc);
+        foreach ($locations as $location) {
+            if (is_dir($location)) {
+                if (!isset($conf->application->$packageDir) || !in_array($location,
+                        $conf->application->$packageDir->toArray())) {
+                    // merge configuration
+                    $conf->merge(new \Phalcon\Config(["application" => [$packageDir => array($location),],]));
+                }
             }
         }
     }

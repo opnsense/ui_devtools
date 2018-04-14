@@ -54,3 +54,51 @@ php run_server.php
 ```
 
 Finally point your browser to http://localhost:8000/ and test your ui software.
+
+
+Using configd locally [*nix only]
+========================================
+
+To test drive template generation and command execution, it can be practical to have a configd instance running as well on your local machine.
+
+In most cases paths will differ on a development machine, but being able to generate templates and execute commands may help the development process.
+
+The documentation for configd itself can be found [here](https://docs.opnsense.org/development/backend.html)
+
+First step is to copy all the files in our service directory to your development location (the example below assumes current working directory):
+```
+rsync -avz /<path_to_core>/src/opnsense/service/* configd
+cd configd
+mkdir tmp
+```
+
+Next edit *conf/configd.conf* and change pid and socket location to something writeable from the current user.
+
+To control where the templates are generated and which config it will use, you can edit the template configuration and change the config and root attributes in all sections
+
+In *conf/actions.d/actions_template.conf* change:
+
+*  config -->  to our config to use
+*  root --> where to write our template output
+
+Finally let's spin up the configd process in a console (install missing python plugins using pip, when you are unable to start the process):
+```
+python configd.py console
+```
+
+Symlink the socket to the expected location (which OPNsense uses) so both our UI and command
+line tools can reach it:
+```
+sudo ln -s /<install location>/configd/tmp/configd.socket /var/run/configd.socket
+```
+
+
+And check it's status in a new console, using:
+```
+python configd_ctl.py configd actions
+```
+
+Which should display a list of registered commands.
+
+Finally make sure you disable **simulate_mode** in the **config.local.php** of your
+local server (restart to apply changes).

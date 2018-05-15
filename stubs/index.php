@@ -51,6 +51,26 @@ function view_fetch_themed_filename($url, $theme)
     return $url; // not found, return source
 }
 
+/**
+ * search for a themed filename or return distribution standard
+ * @param string $url relative url
+ * @param array $theme theme name
+ * @return string
+ */
+function view_file_exists($filename)
+{
+    foreach (\Phalcon\DI\FactoryDefault::getDefault()->get('config')->application->docroot as $path) {
+        // check registered document roots for existence of $filename
+        $root_dir = "/usr/local/opnsense/www/";
+        if (strpos($filename, $root_dir) === 0) {
+            $check_filename = $path . substr($filename, strlen($root_dir));
+            if (file_exists($check_filename)){
+                return true;
+            }
+        }
+    }
+    return file_exists($filename);
+}
 
 try {
     /**

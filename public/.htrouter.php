@@ -56,6 +56,7 @@ foreach ($hosted_local_patterns as $pattern) {
                         'js'  => 'application/javascript',
                         'jpg' => 'image/jpg',
                         'png' => 'image/png',
+                        'svg' => 'image/svg+xml',
                         'map' => 'application/json'
                     ];
                     if (isset($mimeTypes[$tmp_ext[count($tmp_ext)-1]])) {

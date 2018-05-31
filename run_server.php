@@ -1,6 +1,7 @@
 <?php
 /**
  *    Copyright (C) 2018 Deciso B.V.
+ *    Copyright (C) 2018 Fabian Franz
  *
  *    All rights reserved.
  *
@@ -60,6 +61,8 @@ if (PHP_OS == 'WINNT') {
 } else {
     $run_command[] = '-d include_path=".:' . implode(':', $include_paths) . '"';
 }
+
+$run_command[] = "-d open_basedir=";
 
 // listen to localhost
 $run_command[] = "-S localhost:8000";

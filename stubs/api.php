@@ -56,8 +56,7 @@ try {
      * Handle the request
      */
     $application = new \Phalcon\Mvc\Application($di);
-    echo $application->handle()->getContent();
-
+    echo $application->handle($_SERVER['REQUEST_URI'])->getContent();
 } catch (\Exception $e) {
     $response = array();
     $response['errorMessage'] = $e->getMessage();

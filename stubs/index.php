@@ -111,8 +111,7 @@ try {
     // always flush caches for local testing
     (new \OPNsense\Base\Menu\MenuSystem())->invalidateCache();
     (new \OPNsense\Core\ACL())->invalidateCache();
-    echo $application->handle()->getContent();
-
+    echo $application->handle($_SERVER['REQUEST_URI'])->getContent();
 } catch (\Exception $e) {
     echo $e->getMessage();
     echo '<pre>' . $e->getTraceAsString() . '</pre>';

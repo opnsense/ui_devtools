@@ -28,6 +28,12 @@
  */
 $conf = include __DIR__ . "/config.local.php";
 
+ini_set('session.save_path',dirname(realpath(__FILE__)) . '/../temp');
+if (empty(session_save_path())) {
+    // force sessions to use temp when unset
+    ini_set('session.save_path', sys_get_temp_dir());
+}
+
 // Always register OPNsense core libraries into package list
 $conf->merge(new \Phalcon\Config(["environment" =>
         ["packages" => array(

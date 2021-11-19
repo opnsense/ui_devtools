@@ -14,9 +14,21 @@ Requirements
 Make sure you have the same php (http://www.php.net/) and phalcon (https://phalconphp.com/) versions installed on the target to
 which you would like to deploy the test server.
 
-As of this writing OPNsense uses php *7.1.x* and Phalcon *3.3.x*.
+As of this writing OPNsense uses php *7.4.x* and Phalcon *4.1.x*.
 
 In theory this approach should function on both unix like machines and Windows.
+
+Prepare machine (OSX)
+======================
+When using homebrew (https://brew.sh/) on OSX, the easiest option to get you started is by executing
+the following commands:
+
+```
+brew install php@7.4
+brew tap phalcon/extension https://github.com/opnsense/homebrew-tap
+brew install phalcon
+```
+
 
 Setup
 ===========

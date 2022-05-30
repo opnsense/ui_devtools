@@ -26,7 +26,33 @@
  *    POSSIBILITY OF SUCH DAMAGE.
  *
  */
-$loader = new \Phalcon\Loader();
+
+use Phalcon\Autoload\Loader as PhalconLoader5;
+use Phalcon\Loader as PhalconLoader4;
+
+if (!class_exists("PhalconLoader", false)) {
+    if (class_exists("Phalcon\Autoload\Loader", false)) {
+        class LoaderWrapper extends PhalconLoader5 {}
+    } else {
+        class LoaderWrapper extends PhalconLoader4 {}
+    }
+
+    class PhalconLoader extends LoaderWrapper
+    {
+
+        public function __call($fName, $args) {
+            if (method_exists($this, $fName)) {
+                return $this->fName(...$args);
+            } elseif ($fName == 'setDirectories') {
+                /* Phalcon5 renamed registerDirs to setDirectories */
+                return $this->registerDirs(...$args);
+            }
+        }
+
+    }
+}
+
+$loader = new PhalconLoader();
 
 $loaderDirs = array();
 foreach (array("controllersDir", "modelsDir", "libraryDir") as $topic) {
@@ -38,4 +64,4 @@ foreach (array("controllersDir", "modelsDir", "libraryDir") as $topic) {
 /**
  * We're a registering a set of directories taken from the configuration file
  */
-$loader->registerDirs($loaderDirs)->register();
+$loader->setDirectories($loaderDirs)->register();

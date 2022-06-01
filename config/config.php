@@ -54,22 +54,19 @@ if (empty(session_save_path())) {
     ini_set('session.save_path', sys_get_temp_dir());
 }
 
-// Always register OPNsense core libraries into package list
-$conf->merge(new PhalconConfig(["environment" =>
-        ["packages" => array(
-            preg_replace('#/+#','/',"{$conf->environment->coreDir}/")),],
-    ]
-));
-
-// Register our document root as one of the directories to server static pages from
-$conf->merge(new PhalconConfig(["application" =>
-        ["docroot" => array(
-            preg_replace('#/+#','/',"{$_SERVER['DOCUMENT_ROOT']}/")),],
-    ]
-));
-
 // register all packages
+$appcnf = [
+    "docroot" => [
+        preg_replace('#/+#','/',"{$_SERVER['DOCUMENT_ROOT']}/")
+    ],
+    "application" => []
+];
+$packages = [preg_replace('#/+#','/',"{$conf->environment->coreDir}/")];
 foreach ($conf->environment->packages as $package) {
+    $packages[] = $package;
+}
+
+foreach ($packages as $package) {
     $packageDirs = array(
         "controllersDir" => preg_replace('#/+#','/',"{$package}/src/opnsense/mvc/app/controllers/"),
         "modelsDir" => preg_replace('#/+#','/',"{$package}/src/opnsense/mvc/app/models/"),
@@ -89,11 +86,15 @@ foreach ($conf->environment->packages as $package) {
                 if (!isset($conf->application->$packageDir) || !in_array($location,
                         $conf->application->$packageDir->toArray())) {
                     // merge configuration
-                    $conf->merge(new PhalconConfig(["application" => [$packageDir => array($location),],]));
+                    if (!isset($appcnf["application"][$packageDir])) {
+                        $appcnf["application"][$packageDir] = [];
+                    }
+                    $appcnf["application"][$packageDir][] = $location;
                 }
             }
         }
     }
 }
+$conf->merge(new PhalconConfig($appcnf));
 
 return $conf;

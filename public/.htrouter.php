@@ -1,6 +1,6 @@
 <?php
 /**
- *    Copyright (C) 2018 Deciso B.V.
+ *    Copyright (C) 2018-2022 Deciso B.V.
  *
  *    All rights reserved.
  *
@@ -26,6 +26,7 @@
  *    POSSIBILITY OF SUCH DAMAGE.
  *
  */
+error_reporting(E_ALL);
 
 // setup environment
 global $DEV_WORKDIR;

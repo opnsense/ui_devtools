@@ -1,6 +1,6 @@
 <?php
 /**
- *    Copyright (C) 2018 Deciso B.V.
+ *    Copyright (C) 2018-2022 Deciso B.V.
  *
  *    All rights reserved.
  *
@@ -27,6 +27,7 @@
  *
  */
 error_reporting(E_ALL);
+use Phalcon\Di\FactoryDefault as FactoryDefault;
 
 /**
  * search for a themed filename or return distribution standard
@@ -41,7 +42,7 @@ function view_fetch_themed_filename($url, $theme)
         "/"
     );
     foreach ($search_pattern as $pattern) {
-        foreach (\Phalcon\DI\FactoryDefault::getDefault()->get('config')->application->docroot as $path) {
+        foreach (FactoryDefault::getDefault()->get('config')->application->docroot as $path) {
             $filename = "{$path}{$pattern}{$url}";
             if (file_exists($filename)) {
                 return str_replace("//", "/", "/ui{$pattern}{$url}");
@@ -59,7 +60,7 @@ function view_fetch_themed_filename($url, $theme)
  */
 function view_file_exists($filename)
 {
-    foreach (\Phalcon\DI\FactoryDefault::getDefault()->get('config')->application->docroot as $path) {
+    foreach (FactoryDefault::getDefault()->get('config')->application->docroot as $path) {
         // check registered document roots for existence of $filename
         $root_dir = "/usr/local/opnsense/www/";
         if (strpos($filename, $root_dir) === 0) {
@@ -79,7 +80,7 @@ function view_file_exists($filename)
  */
 function view_cache_safe($url)
 {
-    $myview = \Phalcon\DI::getDefault()->get('view');
+    $myview = FactoryDefault::getDefault()->get('view');
     if (!empty($myview->product_hash)) {
         return "{$url}?v={$myview->product_hash}";
     }

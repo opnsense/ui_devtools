@@ -28,7 +28,7 @@
  */
 
 // copy this template to config.local.php and adjust settings
-return new PhalconConfig(array(
+return new Phalcon\Config\Config(array(
     'application' => array(
             /* Usually keep defaults as is */
             'cacheDir'       => __DIR__ . '/../cache/',

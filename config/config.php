@@ -27,23 +27,7 @@
  *
  */
 
-use Phalcon\Config\Config as PhalconConfig5;
-use Phalcon\Config as PhalconConfig4;
-
-if (!class_exists("PhalconConfig", false)) {
-    if (class_exists("Phalcon\Config\Config", false)) {
-        class ConfigWrapper extends PhalconConfig5
-        {
-        }
-    } else {
-        class ConfigWrapper extends PhalconConfig4
-        {
-        }
-    }
-    class PhalconConfig extends ConfigWrapper
-    {
-    }
-}
+use Phalcon\Config\Config as Config;
 
 
 $conf = include __DIR__ . "/config.local.php";
@@ -95,6 +79,6 @@ foreach ($packages as $package) {
         }
     }
 }
-$conf->merge(new PhalconConfig($appcnf));
+$conf->merge(new Config($appcnf));
 
 return $conf;

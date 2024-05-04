@@ -29,24 +29,7 @@
 
 use Phalcon\Autoload\Loader;
 
-if (!class_exists("Loader", false)) {
-
-    class PhalconLoader extends Loader
-    {
-        public function __call($fName, $args) {
-            if (method_exists($this, $fName)) {
-                return $this->fName(...$args);
-            } elseif ($fName == 'setDirectories') {
-                /* Phalcon5 renamed registerDirs to setDirectories */
-                return $this->registerDirs(...$args);
-            }
-        }
-
-    }
-}
-
-$loader = new PhalconLoader();
-
+$loader = new Loader();
 $loaderDirs =[];
 foreach (["controllersDir", "modelsDir", "libraryDir"] as $topic) {
     foreach ($config->application->$topic as $path) {

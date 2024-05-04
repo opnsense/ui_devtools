@@ -14,7 +14,7 @@ Requirements
 Make sure you have the same php (http://www.php.net/) and phalcon (https://phalconphp.com/) versions installed on the target to
 which you would like to deploy the test server.
 
-As of this writing OPNsense uses php *7.4.x* and Phalcon *4.1.x*.
+As of this writing OPNsense uses php *8.2.x* and Phalcon *5.6.x*.
 
 In theory this approach should function on both unix like machines and Windows.
 
@@ -24,7 +24,7 @@ When using homebrew (https://brew.sh/) on OSX, the easiest option to get you sta
 the following commands:
 
 ```
-brew install php@7.4
+brew install php@8.2
 brew tap phalcon/extension https://github.com/opnsense/homebrew-tap
 brew install phalcon
 ```
@@ -43,14 +43,16 @@ absolute paths to both the OPNsense core files and the plugins you wish to expos
 For example, using the default build directories:
 
 ```
-    'environment' => array(
+    $ui_core_dir = '/usr/core';
+    require_once rtrim($ui_core_dir,'/') . '/src/opnsense/mvc/app/config/AppConfig.php';
+    'environment' => [
         /* packages to include in setup */
-        'packages'      => array(
+        'packages'      => [
             '/usr/plugins/security/tinc'
-        ),
+        ],
         /* location of OPNsense core package */
-        'coreDir'        => '/usr/core',
-    )
+        'coreDir'        => $ui_core_dir,
+    ]
 ```
 
 All working directories are pointed to the local directory where this

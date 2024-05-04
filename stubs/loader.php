@@ -1,6 +1,6 @@
 <?php
 /**
- *    Copyright (C) 2018 Deciso B.V.
+ *    Copyright (C) 2018 - 2024 Deciso B.V.
  *
  *    All rights reserved.
  *
@@ -27,19 +27,12 @@
  *
  */
 
-use Phalcon\Autoload\Loader as PhalconLoader5;
-use Phalcon\Loader as PhalconLoader4;
+use Phalcon\Autoload\Loader;
 
-if (!class_exists("PhalconLoader", false)) {
-    if (class_exists("Phalcon\Autoload\Loader", false)) {
-        class LoaderWrapper extends PhalconLoader5 {}
-    } else {
-        class LoaderWrapper extends PhalconLoader4 {}
-    }
+if (!class_exists("Loader", false)) {
 
-    class PhalconLoader extends LoaderWrapper
+    class PhalconLoader extends Loader
     {
-
         public function __call($fName, $args) {
             if (method_exists($this, $fName)) {
                 return $this->fName(...$args);
@@ -54,8 +47,8 @@ if (!class_exists("PhalconLoader", false)) {
 
 $loader = new PhalconLoader();
 
-$loaderDirs = array();
-foreach (array("controllersDir", "modelsDir", "libraryDir") as $topic) {
+$loaderDirs =[];
+foreach (["controllersDir", "modelsDir", "libraryDir"] as $topic) {
     foreach ($config->application->$topic as $path) {
         $loaderDirs[] = $path;
     }

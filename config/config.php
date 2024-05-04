@@ -27,7 +27,6 @@
  *
  */
 
-use Phalcon\Config\Config as Config;
 
 
 $conf = include __DIR__ . "/config.local.php";
@@ -49,6 +48,7 @@ $packages = [preg_replace('#/+#','/',"{$conf->environment->coreDir}/")];
 foreach ($conf->environment->packages as $package) {
     $packages[] = $package;
 }
+
 
 foreach ($packages as $package) {
     $packageDirs = array(
@@ -79,6 +79,6 @@ foreach ($packages as $package) {
         }
     }
 }
-$conf->merge(new Config($appcnf));
+$conf->merge($appcnf);
 
 return $conf;

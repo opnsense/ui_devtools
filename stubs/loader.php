@@ -26,10 +26,9 @@
  *    POSSIBILITY OF SUCH DAMAGE.
  *
  */
+include $config->environment->coreDir . "/src/opnsense/mvc/app/library/OPNsense/Autoload/Loader.php";
+use OPNsense\Autoload\Loader;
 
-use Phalcon\Autoload\Loader;
-
-$loader = new Loader();
 $loaderDirs =[];
 foreach (["controllersDir", "modelsDir", "libraryDir"] as $topic) {
     foreach ($config->application->$topic as $path) {
@@ -37,7 +36,4 @@ foreach (["controllersDir", "modelsDir", "libraryDir"] as $topic) {
     }
 }
 
-/**
- * We're a registering a set of directories taken from the configuration file
- */
-$loader->setDirectories($loaderDirs)->register();
+(new Loader($loaderDirs))->register();

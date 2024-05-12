@@ -75,6 +75,7 @@ foreach ($hosted_local_patterns as $pattern) {
 // set user to root for local testing
 session_start();
 $_SESSION["Username"]="root";
+$_SESSION["last_access"]=time();
 session_write_close();
 
 if (PHP_OS == 'WINNT') {

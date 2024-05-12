@@ -28,22 +28,27 @@
  */
 error_reporting(E_ALL);
 
+function error_output($http_code, $e,  $user_message)
+{
+    $response = [];
+    if (OPNsense\Core\Config::getInstance()->object()->system->deployment != 'development'){
+        $response['errorMessage'] = $user_message;
+    } else {
+        $response['errorMessage'] = $e->getMessage();
+        $response['errorTrace'] = $e->getTraceAsString();
+    }
+    if (method_exists($e, 'getTitle')) {
+        $response['errorTitle'] = $e->getTitle();
+    }
+    header('HTTP', true, $http_code);
+    header("Content-Type: application/json;charset=utf-8");
+    echo htmlspecialchars(json_encode($response), ENT_NOQUOTES);
+}
+
 try {
 
-    /**
-     * Read the configuration
-     */
     $config = include __DIR__ . "/../config/config.php";
-
-    /**
-     * Read auto-loader
-     */
     include __DIR__ . "/loader.php";
-
-    /**
-     * Read services
-     */
-    include $config->environment->coreDir . "/src/opnsense/mvc/app/config/services_api.php";
 
     /**
      * local webserver might have moved Authorization header, move it back
@@ -52,21 +57,23 @@ try {
         $_SERVER['HTTP_AUTHORIZATION'] = "Basic " .base64_encode($_SERVER['PHP_AUTH_USER'].":".$_SERVER['PHP_AUTH_PW']);
     }
 
-    /**
-     * Handle the request
-     */
-    $application = new \Phalcon\Mvc\Application($di);
-    echo $application->handle($_SERVER['REQUEST_URI'])->getContent();
-} catch (\Exception $e) {
-    $response = array();
-    $response['errorMessage'] = $e->getMessage();
-    if (method_exists($e, 'getTitle')) {
-        $response['errorTitle'] = $e->getTitle();
-    } else {
-        $response['errorTitle'] = gettext("An API exception occured");
+    $router = new OPNsense\Mvc\Router('/api/', 'Api');
+    $response = $router->routeRequest($_SERVER['REQUEST_URI']);
+    if (!$response->isSent()) {
+        $response->send();
     }
-    header('HTTP', true, 500);
-    header("Content-Type: application/json;charset=utf-8");
-    echo htmlspecialchars(json_encode($response), ENT_NOQUOTES);
+} catch (\OPNsense\Base\UserException $e) {
+    error_output(500, $e, $e->getMessage());
+} catch (
+    \OPNsense\Mvc\Exceptions\ClassNotFoundException |
+    \OPNsense\Mvc\Exceptions\MethodNotFoundException |
+    \OPNsense\Mvc\Exceptions\ParameterMismatchException |
+    \OPNsense\Mvc\Exceptions\InvalidUriException $e
+) {
+    error_output(404, $e, gettext('Endpoint not found'));
+} catch (\Error | \Exception $e) {
+    error_output(500, $e, gettext('Unexpected error, check log for details'));
     error_log($e);
 }
+
+

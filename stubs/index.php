@@ -27,7 +27,6 @@
  *
  */
 error_reporting(E_ALL);
-use Phalcon\Di\FactoryDefault as FactoryDefault;
 
 /**
  * search for a themed filename or return distribution standard
@@ -42,7 +41,7 @@ function view_fetch_themed_filename($url, $theme)
         "/"
     );
     foreach ($search_pattern as $pattern) {
-        foreach (FactoryDefault::getDefault()->get('config')->application->docroot as $path) {
+        foreach ((new OPNsense\Core\AppConfig())->application->docroot as $path) {
             $filename = "{$path}{$pattern}{$url}";
             if (file_exists($filename)) {
                 return str_replace("//", "/", "/ui{$pattern}{$url}");
@@ -60,7 +59,7 @@ function view_fetch_themed_filename($url, $theme)
  */
 function view_file_exists($filename)
 {
-    foreach (FactoryDefault::getDefault()->get('config')->application->docroot as $path) {
+    foreach ((new OPNsense\Core\AppConfig())->application->docroot as $path) {
         // check registered document roots for existence of $filename
         $root_dir = "/usr/local/opnsense/www/";
         if (strpos($filename, $root_dir) === 0) {
@@ -80,11 +79,7 @@ function view_file_exists($filename)
  */
 function view_cache_safe($url)
 {
-    $myview = FactoryDefault::getDefault()->get('view');
-    if (!empty($myview->product_hash)) {
-        return "{$url}?v={$myview->product_hash}";
-    }
-    return $url;
+    return "{$url}?v=" . uniqid();
 }
 
 /**
@@ -100,30 +95,28 @@ function view_html_safe($text)
 
 
 try {
-    /**
-     * Read the configuration
-     */
     $config = include __DIR__ . "/../config/config.php";
-
-    /**
-     * Read auto-loader
-     */
     include __DIR__ . "/loader.php";
 
     /**
-     * Read services
+     * local webserver might have moved Authorization header, move it back
      */
-    include $config->environment->coreDir . "/src/opnsense/mvc/app/config/services.php";
+    if (!empty($_SERVER['PHP_AUTH_USER']) && !empty($_SERVER['PHP_AUTH_PW'])) {
+        $_SERVER['HTTP_AUTHORIZATION'] = "Basic " .base64_encode($_SERVER['PHP_AUTH_USER'].":".$_SERVER['PHP_AUTH_PW']);
+    }
 
-    /**
-     * Handle the request
-     */
-    $application = new \Phalcon\Mvc\Application($di);
+    $router = new OPNsense\Mvc\Router('/ui/');
 
     // always flush caches for local testing
     (new \OPNsense\Base\Menu\MenuSystem())->invalidateCache();
     (new \OPNsense\Core\ACL())->invalidateCache();
-    echo $application->handle($_SERVER['REQUEST_URI'])->getContent();
+    $response = $router->routeRequest($_SERVER['REQUEST_URI'],[
+        'controller' => 'indexController',
+        'action' => 'indexAction'
+    ]);
+    if (!$response->isSent()) {
+        $response->send();
+    }
 } catch (\Exception $e) {
     echo $e->getMessage();
     echo '<pre>' . $e->getTraceAsString() . '</pre>';

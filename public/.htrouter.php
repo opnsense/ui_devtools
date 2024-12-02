@@ -39,6 +39,7 @@ $config = include "{$DEV_WORKDIR}/config/config.php";
 
 // handle local hosted files (js, css, etc)
 $hosted_local_patterns = array();
+$hosted_local_patterns[] = '/^\/ui\/assets\/.*/';
 $hosted_local_patterns[] = '/^\/ui\/css\/.*/';
 $hosted_local_patterns[] = '/^\/ui\/fonts\/.*/';
 $hosted_local_patterns[] = '/^\/ui\/js\/.*/';

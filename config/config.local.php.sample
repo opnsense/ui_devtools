@@ -34,15 +34,17 @@ require_once rtrim($ui_core_dir,'/') . '/src/opnsense/mvc/app/config/AppConfig.p
 return new OPNsense\Core\AppConfig([
     'application' =>  [
         /* Usually keep defaults as is */
-        'cacheDir'       => __DIR__ . '/../cache/',
         'baseUri'        => '/opnsense_gui/',
+        'cacheDir'       => __DIR__ . '/../cache/',
+        'tempDir'        => __DIR__ . '/../temp/',
+        'configDir'      => __DIR__ . '/../conf/',
     ],
     'globals' => [
         /* Usually keep defaults as is */
-        'config_path'    => __DIR__ . '/../conf/',
-        'temp_path'      => __DIR__ . '/../temp/',
         'debug'          => false,
-        'simulate_mode'  => true
+        'owner'          => 'wwwonly:wheel',
+        'simulate_mode'  => true,
+        'contrib'        => [],
     ],
     'environment' => [
         /* packages to include in setup */

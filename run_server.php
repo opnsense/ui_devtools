@@ -44,13 +44,13 @@ $config = include __DIR__ . "/config/config.php";
 
 
 // copy default config when there is no config found
-if (!is_file("{$config->globals->config_path}/config.xml")) {
-    copy("{$config->environment->coreDir}/src/etc/config.xml.sample", "{$config->globals->config_path}/config.xml");
+if (!is_file("{$config->application->configDir}/config.xml")) {
+    copy("{$config->environment->coreDir}/src/etc/config.xml.sample", "{$config->application->configDir}/config.xml");
 }
 
 // gather php include paths and add to run command
-$include_paths = array();
-foreach ($conf->application->contrib as $include) {
+$include_paths = [];
+foreach ($config->globals->contrib as $include) {
     if (is_dir($include)) {
         $include_paths[] = trim($include);
     }

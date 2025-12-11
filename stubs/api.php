@@ -46,7 +46,6 @@ function error_output($http_code, $e,  $user_message)
 }
 
 try {
-
     $config = include __DIR__ . "/../config/config.php";
     include __DIR__ . "/loader.php";
 
